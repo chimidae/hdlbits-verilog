@@ -1,0 +1,35 @@
+# Icarus Verilog
+*.vvp
+*.out
+a.out
+
+# Verilator
+obj_dir/
+
+# 시뮬레이션 덤프는 용량이 커서 제외, 파형은 waveforms/에 png로만 커밋
+*.vcd
+*.fst
+*.ghw
+*.gtkw
+
+# Vivado / Quartus
+*.jou
+*.str
+.Xil/
+vivado*.backup*
+db/
+incremental_db/
+output_files/
+simulation/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
