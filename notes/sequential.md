@@ -92,3 +92,35 @@ end
 ## 5. 그 외 막혔던 것
 
 <!-- 위 분류에 안 들어가는 개별 이슈 -->
+
+---
+
+# 실패 로그
+
+통과하지 못한 시도를 시간순으로 남긴다. 원인은 해결한 뒤에 직접 채운다.
+
+## Dff8p — 1차 시도 (2026-07-24)
+
+```verilog
+module top_module (
+    input clk,
+    input reset,
+    input [7:0] d,
+    output [7:0] q
+);
+    always @(negedge clk) begin
+        if (reset) begin 
+            q <= d;
+        end
+        else begin
+            q <= 8'h34;
+        end
+    end
+endmodule
+```
+
+결과: 실패
+
+원인:
+
+<!-- 해결하고 나서 채운다 -->
