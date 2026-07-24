@@ -1,16 +1,19 @@
 //==============================================================
-// Problem : Dff
+// Problem : Dff8
 // Section : Circuits / Sequential / Latches and Flip-Flops
-// URL     : https://hdlbits.01xz.net/wiki/Dff
+// URL     : https://hdlbits.01xz.net/wiki/Dff8
 // Tier    : 1
 // Solved  : 2026-07-24
+//--------------------------------------------------------------
+// 벡터 한 줄로 8개 플립플롭이 병렬 합성된다. 반복문 불필요.
 //==============================================================
 
 module top_module (
-    input clk,    // Clocks are used in sequential circuits
-    input d,
-    output reg q );
+    input clk,
+    input [7:0] d,
+    output [7:0] q
+);
     always @(posedge clk) begin
-        q = d;
+        q <= d;
     end
 endmodule
