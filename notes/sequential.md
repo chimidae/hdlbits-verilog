@@ -75,3 +75,23 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 별도 기록 없음
 - 배운 것: 별도 기록 없음
 - 코드: [`m2014_q4b.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4b.v)
+
+## Exams/m2014 q4c
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 별도 기록 없음
+- 코드: [`m2014_q4c.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4c.v)
+
+## Exams/m2014 q4d
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: `D` 계산과 `out` 연결을 clocked `always` 안에 넣었을 때 왜 실패하는지 확인함.
+- 몰랐던 부분: clocked `always` 안에 쓴 `D`, `Q`, `out`이 모두 클럭 엣지에서 갱신되는 저장소가 되고, non-blocking 할당은 같은 엣지에서 계산한 새 값이 아니라 이전 값을 읽는다는 점.
+- 배운 것: `D = in ^ Q`와 `out = Q`는 조합 연결이고 `Q`만 플립플롭이어야 한다. 따라서 `D`와 `out`은 continuous assignment로 연결하고 `Q <= D`만 `posedge clk` 블록에 둔다.
+- 코드: [`m2014_q4d.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4d.v)
+- 당시 가설: "둘 다 always 안에 넣으면 안됬던 모양. 이러면 FF으로 올라갈때만 연결되는 듯."
+- 실패 기록: 1차 시도에서 `D <= in ^ Q`, `Q <= D`, `out <= Q`를 모두 `posedge clk` 블록에 넣어 HDLBits FAIL.
