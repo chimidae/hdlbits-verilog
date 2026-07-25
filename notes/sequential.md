@@ -47,3 +47,13 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 배운 것: active-high synchronous reset은 `negedge clk`에서 `reset`을 검사하며, reset이면 `8'h34`, 아니면 `d`를 저장한다.
 - 코드: [`dff8p.v`](../2_circuits/02_sequential/01_latches_and_ff/dff8p.v)
 - 실패 기록: 2026-07-24 1차 시도에서 `negedge clk`를 사용하고 reset 분기에서 `d`, 그 외 분기에서 `8'h34`를 할당했으나 HDLBits FAIL.
+
+## Dff16e
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: `byteena`가 0일 때 해당 바이트를 할당하지 않아도 되는 이유와 래치가 생기는지 질문함.
+- 몰랐던 부분: active-low reset의 조건을 반대로 썼고, `byteena`가 0이면 해당 바이트를 0으로 만드는 것으로 이해했다.
+- 배운 것: `resetn == 0`일 때 동기 reset이 적용된다. clocked `always` 블록에서 `byteena`가 0인 바이트를 할당하지 않으면 해당 플립플롭은 이전 값을 유지하며 래치가 생기지 않는다.
+- 코드: [`dff16e.v`](../2_circuits/02_sequential/01_latches_and_ff/dff16e.v)
+- 실패 기록: 1차 시도에서 reset 극성을 반대로 쓰고, `byteena`가 0인 바이트에 0을 할당해 HDLBits FAIL. 파형에서 reset 반전과 부분 바이트 mismatch를 확인한 뒤 수정함.
