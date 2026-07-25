@@ -66,3 +66,12 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: `always @(*)`에서 일부 조건에 출력을 할당하지 않는 방식이 의도적으로 래치를 추론하는 표준 방식인지 궁금했다.
 - 배운 것: `ena == 0`일 때 `q`가 이전 값을 유지해야 하므로 저장소가 필요하며, edge가 아닌 enable 레벨에 반응하므로 래치가 된다. Verilog에서는 불완전 할당으로 추론하고, SystemVerilog에서는 `always_latch`로 의도를 명시할 수 있다.
 - 코드: [`m2014_q4a.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4a.v)
+
+## Exams/m2014 q4b
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 별도 기록 없음
+- 코드: [`m2014_q4b.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4b.v)
