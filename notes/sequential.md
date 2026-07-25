@@ -57,3 +57,12 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 배운 것: `resetn == 0`일 때 동기 reset이 적용된다. clocked `always` 블록에서 `byteena`가 0인 바이트를 할당하지 않으면 해당 플립플롭은 이전 값을 유지하며 래치가 생기지 않는다.
 - 코드: [`dff16e.v`](../2_circuits/02_sequential/01_latches_and_ff/dff16e.v)
 - 실패 기록: 1차 시도에서 reset 극성을 반대로 쓰고, `byteena`가 0인 바이트에 0을 할당해 HDLBits FAIL. 파형에서 reset 반전과 부분 바이트 mismatch를 확인한 뒤 수정함.
+
+## Exams/m2014 q4a
+
+- 상태: OPEN
+- Local sim: NOT RUN
+- AI에게 물은 것: 래치를 만드는 다른 RTL 표현이 있는지 질문함.
+- 몰랐던 부분: `always @(*)`에서 일부 조건에 출력을 할당하지 않는 방식이 의도적으로 래치를 추론하는 표준 방식인지 궁금했다.
+- 배운 것: `ena == 0`일 때 `q`가 이전 값을 유지해야 하므로 저장소가 필요하며, edge가 아닌 enable 레벨에 반응하므로 래치가 된다. Verilog에서는 불완전 할당으로 추론하고, SystemVerilog에서는 `always_latch`로 의도를 명시할 수 있다.
+- 코드: [`m2014_q4a.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4a.v)
