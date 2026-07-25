@@ -34,16 +34,16 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 상태: HDLBits PASS
 - Local sim: NOT RUN
 - AI에게 물은 것: 없음
-- 몰랐던 부분: 별도 기록 없음
-- 배운 것: active-high 비동기 reset은 sensitivity list의 `posedge areset`과 `if (areset)`의 극성을 맞춰 작성한다.
+- 몰랐던 부분: 동기 reset과 비동기 reset의 차이를 검색했다.
+- 배운 것: 동기 reset은 클럭 엣지에서만 평가되고, 비동기 reset은 reset의 활성 엣지에서도 즉시 적용된다.
 - 코드: [`dff8ar.v`](../2_circuits/02_sequential/01_latches_and_ff/dff8ar.v)
 
 ## Dff8p
 
-- 상태: HDLBits FAIL
+- 상태: HDLBits PASS
 - Local sim: NOT RUN
 - AI에게 물은 것: 없음
-- 몰랐던 부분: 실패 원인은 별도 기록 없음
-- 배운 것: 별도 기록 없음
+- 몰랐던 부분: 1차 시도에서 reset 분기와 정상 동작 분기의 할당값을 반대로 작성했다.
+- 배운 것: active-high synchronous reset은 `negedge clk`에서 `reset`을 검사하며, reset이면 `8'h34`, 아니면 `d`를 저장한다.
 - 코드: [`dff8p.v`](../2_circuits/02_sequential/01_latches_and_ff/dff8p.v)
 - 실패 기록: 2026-07-24 1차 시도에서 `negedge clk`를 사용하고 reset 분기에서 `d`, 그 외 분기에서 `8'h34`를 할당했으나 HDLBits FAIL.
