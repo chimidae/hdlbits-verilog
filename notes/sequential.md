@@ -60,7 +60,7 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 
 ## Exams/m2014 q4a
 
-- 상태: OPEN
+- 상태: HDLBits PASS
 - Local sim: NOT RUN
 - AI에게 물은 것: 래치를 만드는 다른 RTL 표현이 있는지 질문함.
 - 몰랐던 부분: `always @(*)`에서 일부 조건에 출력을 할당하지 않는 방식이 의도적으로 래치를 추론하는 표준 방식인지 궁금했다.

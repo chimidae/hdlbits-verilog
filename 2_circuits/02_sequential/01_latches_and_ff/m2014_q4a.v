@@ -2,7 +2,7 @@
 // Problem : Exams/m2014 q4a
 // Section : Circuits / Sequential / Latches and Flip-Flops
 // URL     : https://hdlbits.01xz.net/wiki/Exams/m2014_q4a
-// Solved  : OPEN
+// Solved  : 2026-07-25
 //--------------------------------------------------------------
 // 헷갈린 부분:
 // 래치를 만드는 다른 RTL 표현이 있는지, else가 없는 if 외에
