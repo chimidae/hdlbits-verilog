@@ -95,3 +95,21 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 코드: [`m2014_q4d.v`](../2_circuits/02_sequential/01_latches_and_ff/m2014_q4d.v)
 - 당시 가설: "둘 다 always 안에 넣으면 안됬던 모양. 이러면 FF으로 올라갈때만 연결되는 듯."
 - 실패 기록: 1차 시도에서 `D <= in ^ Q`, `Q <= D`, `out <= Q`를 모두 `posedge clk` 블록에 넣어 HDLBits FAIL.
+
+## Mt2015 muxdff
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: MUX 출력과 플립플롭 입력 사이를 중간 `wire D`로 표현하는 방식이 직관적이지 않다고 느꼈다.
+- 배운 것: MUX 출력은 조합 논리로 계산하고, 그 결과를 `posedge clk`에서 `Q`에 저장하는 구조다.
+- 코드: [`mt2015_muxdff.v`](../2_circuits/02_sequential/01_latches_and_ff/mt2015_muxdff.v)
+
+## Exams/2014 q4a
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 처음에는 플립플롭 출력 `Q`를 피드백 신호 `o`에 연결하는 것을 빠뜨렸다.
+- 배운 것: `E == 0`일 때 현재 `Q`를 다시 선택해 값을 유지하려면 `o = Q` 피드백 연결이 필요하다.
+- 코드: [`2014_q4a.v`](../2_circuits/02_sequential/01_latches_and_ff/2014_q4a.v)
