@@ -5,7 +5,7 @@
 // HDLBits 원본은 전부 모듈명이 top_module이므로 여기서는 충돌을 피하려고
 // 문제명 접미사를 붙였다. 로직 자체는 제출한 것과 동일하다.
 //
-// 각 모듈 위의 //-- 한 줄이 scripts/gen_readme.py가 읽는 헤더다.
+// 각 모듈 위에 문제 이름과 HDLBits URL을 남긴다.
 //==============================================================
 
 //-- Wire | https://hdlbits.01xz.net/wiki/Wire
@@ -33,6 +33,3 @@ module norgate_top (
 );
     assign out = ~(in1 | in2);
 endmodule
-
-
-// 여기에 나머지 basics 문제를 같은 형식으로 이어 붙인다.
