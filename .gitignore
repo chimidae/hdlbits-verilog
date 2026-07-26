@@ -6,6 +6,9 @@ a.out
 # Verilator
 obj_dir/
 
+# sim.py 산출물
+build/
+
 # 시뮬레이션 덤프는 용량이 커서 제외, 파형은 waveforms/에 png로만 커밋
 *.vcd
 *.fst
