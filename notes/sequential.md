@@ -179,3 +179,43 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 당시 가설: "따로 posedge 랑 negedge 두고 둘 중 하나 작동하면 작동했다고 신호 싸주고 받으면 되는거 아니냐고"
 - 실패 기록: 2026-07-27 1차 시도에서 `always @(posedge clk or negedge clk)`를 쓰려다 불가능함을 확인. 2차 시도에서 `pon`, `non`을 플래그로 쓰고 조합 블록에서 0으로 되돌리려 했으나, 두 블록이 같은 신호를 할당해 드라이버 충돌이 발생함.
 - 남은 것: `pon`과 `non`에 초기값이 없어 시뮬레이션 초반에 x가 나올 수 있다. HDLBits는 통과했지만 local sim에서는 확인이 필요하다.
+
+# Counters
+
+## Count15
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 4비트 신호는 `15 + 1`이 자동으로 `0`이 되므로 별도 wrap 처리가 필요 없다. 동기 reset을 `if`로 먼저 두고 `else`에서 증가시키는 구조는 Edgecapture에서 쓴 기본값 덮어쓰기와 같은 구조이며 순서만 반대다.
+- 코드: [`count15.v`](../2_circuits/02_sequential/02_counters/count15.v)
+
+## Count10
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 랩 조건이 왜 10이 아니라 9인지 질문함.
+- 몰랐던 부분: 1차 시도에서 `q >= 10`으로 랩 조건을 걸어 주기가 11이 됐다.
+- 배운 것: 조건은 지금 값으로 검사하고 결과는 다음 값에 반영된다. `q <= 0`은 지금 `q`를 0으로 만드는 것이 아니라 다음 사이클의 `q`를 0으로 만드므로, `q`가 10이 되는 순간은 존재하지 않는다. mod-N 카운터의 랩 조건은 항상 `N-1`을 검사한다. Count15는 4비트 오버플로가 이걸 대신해줬을 뿐이고 원리는 같다.
+- 코드: [`count10.v`](../2_circuits/02_sequential/02_counters/count10.v)
+- 실패 기록: 2026-07-27 1차 시도에서 `q >= 10`으로 작성해 FAIL.
+
+## Count1to10
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 시작값이 0이 아니라 1이므로 reset과 랩 모두 `4'b0001`로 밀면 된다. 랩 조건은 Count10과 같은 원리로 최대값인 10을 그대로 검사한다.
+- 코드: [`count1to10.v`](../2_circuits/02_sequential/02_counters/count1to10.v)
+- 남은 것: `else` 분기에 blocking(`=`)을 쓰고 `if` 분기에는 non-blocking(`<=`)을 썼다. 분기가 배타적이라 결과가 같아 통과했지만, 순차 회로는 `<=`로 통일하는 것이 원칙이다. 섞어 쓰면 시뮬레이션과 합성 결과가 갈리는 경우가 생긴다.
+
+## Countslow
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 통과 후 구조에 대한 피드백을 받음.
+- 몰랐던 부분: `slowena`를 바깥 분기로 두는 바람에 `reset` 처리가 양쪽 가지에 모두 필요해져 같은 코드를 두 번 썼다.
+- 배운 것: `if-else` 사슬은 위에서부터 우선순위이므로, 조건이 여러 개면 우선순위 순서대로 위에서 아래로 나열하면 중첩과 중복이 사라진다. `reset`을 맨 위로 올리고 `else if (slowena)`로 둘째 줄을 두면 된다. `slowena`가 0일 때 아무것도 할당하지 않는 것이 그대로 유지 동작이며, Exams/ece241 2013 q7의 `Qold` 처리와 같은 원리다.
+- 코드: [`countslow.v`](../2_circuits/02_sequential/02_counters/countslow.v)
