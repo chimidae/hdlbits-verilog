@@ -271,3 +271,14 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 없음
 - 배운 것: 비동기 리셋은 감지 리스트에 `posedge areset`을 추가해 만들고, 그 뒤로 load, ena 순서로 `else if`를 쌓으면 문제가 요구한 우선순위가 그대로 만들어진다. 우측 시프트는 `q >> 1`로 끝나며, 빈 자리에 0이 채워지고 `q[0]`은 버려진다.
 - 코드: [`shift4.v`](../2_circuits/02_sequential/03_shift_registers/shift4.v)
+
+## Rotate100
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 힌트를 요청함. 왜 틀렸는지 모르겠다고 질문함.
+- 몰랐던 부분: 회전 대상을 `data`로 잡았다. `data`는 로드할 때만 쓰는 입력이고 회전시켜야 할 대상은 레지스터 자신인 `q`다. 또 `q`에 두 줄에 걸쳐 중복 할당했다.
+- 배운 것: 회전은 "떼어낸 비트를 반대쪽 끝에 붙이는 것"이므로 concatenation 한 줄로 그대로 옮길 수 있다. 우회전은 `{q[0], q[99:1]}`, 좌회전은 `{q[98:0], q[99]}`. 시프트와 달리 밀려난 비트를 버리지 않고 반대쪽으로 재입력한다.
+- 코드: [`rotate100.v`](../2_circuits/02_sequential/03_shift_registers/rotate100.v)
+- 실패 기록: 2026-07-28 1차 시도에서 `q <= data >> 1`과 `q[99] <= data[0]`으로 작성해 FAIL.
+- 남은 것: `reg save;`는 쓰지 않는 신호라 삭제 가능하다.
