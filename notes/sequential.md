@@ -219,3 +219,34 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: `slowena`를 바깥 분기로 두는 바람에 `reset` 처리가 양쪽 가지에 모두 필요해져 같은 코드를 두 번 썼다.
 - 배운 것: `if-else` 사슬은 위에서부터 우선순위이므로, 조건이 여러 개면 우선순위 순서대로 위에서 아래로 나열하면 중첩과 중복이 사라진다. `reset`을 맨 위로 올리고 `else if (slowena)`로 둘째 줄을 두면 된다. `slowena`가 0일 때 아무것도 할당하지 않는 것이 그대로 유지 동작이며, Exams/ece241 2013 q7의 `Qold` 처리와 같은 원리다.
 - 코드: [`countslow.v`](../2_circuits/02_sequential/02_counters/countslow.v)
+
+## Exams/ece241 2014 q7a
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 제공된 count4의 `load` 입력이 무엇인지, 인스턴스화 구문에서 syntax error가 나는 이유가 무엇인지 질문함.
+- 몰랐던 부분: 모듈 인스턴스화를 `always` 블록 안에 넣어 syntax error가 났다. 또 카운트를 top_module이 직접 하려 했다. 실제로는 count4가 카운트하고 top_module은 제어 신호만 만든다.
+- 배운 것: 모듈 인스턴스화는 문장이 아니라 배선이므로 `assign`과 같은 층위에 놓이고 `always` 밖에만 올 수 있다. count4는 스스로 랩하지 못하므로 12에서 1로 되돌리는 유일한 수단이 `load`다. `load`가 `enable`보다 우선순위가 높기 때문에, 랩 조건에 `enable`을 함께 물리지 않으면 카운터가 멈춰 있는 상태에서도 12에서 로드가 걸려 정지가 깨진다.
+- 코드: [`ece241_2014_q7a.v`](../2_circuits/02_sequential/02_counters/ece241_2014_q7a.v)
+- 실패 기록: 2026-07-28 1차 시도에서 `count4` 인스턴스화를 `always` 블록 안에 넣어 컴파일 실패. 2차 시도에서 `c_load = reset`만 두어 12 이후로 계속 증가함. 3차 시도에서 `c_load = reset | (Q >= 12)`로 수정했으나 파형을 보고 `enable`이 0일 때도 로드가 걸리는 것을 발견해 `& enable`을 추가함.
+- 남은 것: `Q >= 12 & enable`은 연산자 우선순위가 우연히 맞았다. `(Q >= 12) & enable`처럼 괄호로 명시하는 편이 안전하다.
+
+## Exams/ece241 2014 q7b
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: BCD 카운터가 무엇인지 질문함. 문제 이해가 맞는지 검토를 요청함(힌트는 요청하지 않음). Verilog에 소수점이 없는지 확인함. 속도 조정 방향에 대해 힌트를 받음.
+- 몰랐던 부분: 세 카운터의 속도가 이미 조정된 것인지 직접 만들어야 하는 것인지 헷갈렸다. `c_enable`을 자릿수 이름으로 이해했으나 실제로는 각 카운터의 enable 입력으로 들어가는 신호다.
+- 배운 것: 세 카운터가 모두 같은 1000 Hz `clk`을 직접 받고, 클럭을 나누는 것이 아니라 enable로 속도 차를 만든다. 윗자리 enable은 아랫자리가 한 바퀴 돌았다는 조건을 누적해서 만든다. 출력을 `always`에 넣으면 한 클럭 늦으므로 999가 아니라 998을 검사해야 한다. 조합으로 빼면 999를 그대로 검사하며 파형은 같다.
+- 코드: [`ece241_2014_q7b.v`](../2_circuits/02_sequential/02_counters/ece241_2014_q7b.v)
+- 당시 가설: "OneHertz는 아마 c_enable이 999가 되었을때 1 올리고 리셋되는거려나"
+- 실패 기록: 2026-07-28 1차 시도에서 인스턴스 이름을 `counter1`로 두 번 써서 컴파일 실패. `c_enable`을 `always` 안에서 만들려 했던 것도 `assign`으로 수정함.
+
+## Countbcd
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음. 한 번에 통과함.
+- 몰랐던 부분: 없음
+- 배운 것: Exams/ece241 2014 q7b의 구조를 그대로 옮겼다. 한 자리짜리 `decade_counter`를 직접 정의해 네 개 인스턴스화하고, 윗자리 enable은 아랫자리 조건을 누적해서 만든다. `ena[3]`이 세 자리 조건을 모두 확인하는 것이 캐리 전파와 같은 구조다.
+- 코드: [`countbcd.v`](../2_circuits/02_sequential/02_counters/countbcd.v)
