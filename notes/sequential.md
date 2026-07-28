@@ -250,3 +250,24 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 없음
 - 배운 것: Exams/ece241 2014 q7b의 구조를 그대로 옮겼다. 한 자리짜리 `decade_counter`를 직접 정의해 네 개 인스턴스화하고, 윗자리 enable은 아랫자리 조건을 누적해서 만든다. `ena[3]`이 세 자리 조건을 모두 확인하는 것이 캐리 전파와 같은 구조다.
 - 코드: [`countbcd.v`](../2_circuits/02_sequential/02_counters/countbcd.v)
+
+## Count clock
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음. 수많은 실패 끝에 스스로 해결함.
+- 몰랐던 부분: 시 자리가 01-12라 0이 아니라 1에서 시작하고 12에서 1로 돌아가야 해서 처리가 까다로웠다. 별도 모듈로 분리해 해결함.
+- 배운 것: 초와 분은 `max`를 파라미터로 받는 카운터 하나로 일반화해 네 자리에 재사용할 수 있다. 자리별 enable을 아랫자리 조건을 누적해 만드는 구조는 Countbcd와 같으며, 여기서는 모든 조건에 `ena`가 함께 들어가야 한다.
+- 코드: [`count_clock.v`](../2_circuits/02_sequential/02_counters/count_clock.v)
+- 남은 것: 통과했지만 잠복 버그가 둘 있다. (1) `pm` 토글 조건에 `ena`가 빠져 있어, 11:59:59에 머무는 동안 `ena`가 0인 클럭마다 `pm`이 뒤집힌다. (2) `pm` 블록의 두 번째 `if`가 `else if`가 아니라서, 11:59:59에 `reset`이 들어오면 아래쪽이 이겨 `pm`이 0이 되는 대신 토글된다. `else if`로 묶고 `& ena`를 추가하면 둘 다 해결된다. `decade_counter2` 맨 위의 `if (r == 0 & q == 0)`도 `reset` 체인 밖에 있어 구조상 불안정하다.
+
+# Shift Registers
+
+## Shift4
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: 비동기 리셋은 감지 리스트에 `posedge areset`을 추가해 만들고, 그 뒤로 load, ena 순서로 `else if`를 쌓으면 문제가 요구한 우선순위가 그대로 만들어진다. 우측 시프트는 `q >> 1`로 끝나며, 빈 자리에 0이 채워지고 `q[0]`은 버려진다.
+- 코드: [`shift4.v`](../2_circuits/02_sequential/03_shift_registers/shift4.v)
