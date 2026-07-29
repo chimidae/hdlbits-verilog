@@ -282,3 +282,68 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 코드: [`rotate100.v`](../2_circuits/02_sequential/03_shift_registers/rotate100.v)
 - 실패 기록: 2026-07-28 1차 시도에서 `q <= data >> 1`과 `q[99] <= data[0]`으로 작성해 FAIL.
 - 남은 것: `reg save;`는 쓰지 않는 신호라 삭제 가능하다.
+
+## Shift18
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 문제가 요구하는 바가 부호 비트를 고려한 시프트가 맞는지 확인함.
+- 몰랐던 부분: 없음
+- 배운 것: 산술 우측 시프트는 빈 자리에 0이 아니라 부호 비트 `q[63]`을 채워야 음수가 음수로 남는다. 좌측 시프트는 산술과 논리가 같아 아래에 0을 채우면 된다. 반복 연결 `{n{신호}}`은 부호 확장과 벡터 채우기에 계속 쓰이는 패턴이다. `>>>` 연산자도 있으나 피연산자가 `signed`여야 산술 시프트로 동작한다.
+- 코드: [`shift18.v`](../2_circuits/02_sequential/03_shift_registers/shift18.v)
+
+## Lfsr5
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Galois LFSR은 탭이 있는 위치만 출력 비트와 XOR하고 나머지는 그대로 시프트한다. reset이 `5'h1`이라 `q[0]`만 1이고 나머지는 0이므로, 리셋값이 다른 플립플롭 모듈을 둘로 나누어 인스턴스화했다. 이 방식은 회로도와 1:1로 대응된다는 장점이 있다.
+- 코드: [`lfsr5.v`](../2_circuits/02_sequential/03_shift_registers/lfsr5.v)
+- 남은 것: `always` 블록 하나로 압축할 수 있다. `if (reset) q <= 5'h1; else q <= {q[0], q[4], q[3]^q[0], q[2], q[1]};` 다음 상태 전체를 한 줄로 기술하는 형태가 LFSR에서는 더 흔하다.
+
+## Mt2015 lfsr
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음. Lfsr5 직후에 배운 압축 형태를 바로 적용해 통과함.
+- 몰랐던 부분: 없음
+- 배운 것: 다음 상태 전체를 concatenation 한 줄로 기술하면 `{}` 안의 삼항 연산자가 회로도의 MUX와 1:1로 대응한다. `reg [2:0]`은 플립플롭 세 개이며, `<=`로 한 줄에 할당하는 것은 세 개가 동시에 자기 D를 샘플링하는 것과 같다.
+- 코드: [`mt2015_lfsr.v`](../2_circuits/02_sequential/03_shift_registers/mt2015_lfsr.v)
+- 남은 것: `L`이 세 MUX에 공통으로 들어가므로 밖으로 빼낼 수 있다. `LEDR <= KEY[1] ? SW : {LEDR[1]^LEDR[2], LEDR[0], LEDR[2]};`
+
+## Lfsr32
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Lfsr5의 압축 형태를 32비트로 그대로 확장했다. 탭 번호는 1부터, 비트 인덱스는 0부터라 한 칸씩 밀린다. 탭 32, 22, 2, 1은 `q[31]`, `q[21]`, `q[1]`, `q[0]`이며, Galois 구조에서 XOR은 해당 탭 위치로 들어오는 자리에 붙는다. `{}` 안의 폭 합이 32가 되는지 확인해야 하며, 어긋나면 컴파일은 통과하고 동작만 틀려서 찾기 어렵다.
+- 코드: [`lfsr32.v`](../2_circuits/02_sequential/03_shift_registers/lfsr32.v)
+
+## Exams/m2014 q4k
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 이 회로를 왜 만들게 하는지 물음.
+- 몰랐던 부분: 없음. `resetn`이 active-low라는 것은 앞서 한 번 겪어본 패턴이라 바로 처리함.
+- 배운 것: 4단 시프트 레지스터는 그 자체로 지연선(delay line)이며, `in`이 4클럭 뒤에 `out`으로 나온다. 시프트 레지스터의 가장 기본 용도가 이것이다. 파이프라인 정렬(연산 결과와 원본 데이터의 타이밍 맞추기), CDC용 2-FF synchronizer, 엣지 검출의 직전값 보관에 계속 쓰인다. Edgedetect의 `save`가 1단 지연선이었다.
+- 코드: [`m2014_q4k.v`](../2_circuits/02_sequential/03_shift_registers/m2014_q4k.v)
+
+## Exams/2014 q4b
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Exams/2014 q4a에서 만든 MUXDFF를 네 개 인스턴스화해 체인으로 잇는다. `u0`의 `w`만 외부 입력이고 나머지는 앞단의 `Q`를 받는다. 삼항 중첩에서 `L`이 `E`보다 바깥에 있어야 로드가 우선이 되며, 둘 다 0이면 `Q`를 그대로 넣어 유지한다.
+- 코드: [`2014_q4b.v`](../2_circuits/02_sequential/03_shift_registers/2014_q4b.v)
+
+## Exams/ece241 2013 q12
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 시프트 레지스터의 구조가 어떤 것인지 물음. `Q[0]`에 넣고 거기서 `Q[7]`을 다시 뽑아 순환하는 구조인지, `Q`를 `wire`로 선언하는 것이 맞는지 확인함.
+- 몰랐던 부분: "MSB가 먼저 시프트되어 들어간다"는 설명을 배선 구조에 대한 설명으로 오해해 순환 구조로 생각했다.
+- 배운 것: 시프트 레지스터는 `S -> Q[0] -> Q[1] -> ... -> Q[7]`로 이어진 단방향 체인이며 되돌아오는 경로가 없다. 순서 설명은 처음 넣은 비트가 결국 `Q[7]`까지 밀린다는 뜻이다. 8:1 MUX는 `Q[{A,B,C}]`로 가변 인덱싱하면 합성기가 MUX로 만들어준다. 이 회로가 3입력 LUT이며, FPGA의 기본 구성 요소다.
+- 코드: [`ece241_2013_q12.v`](../2_circuits/02_sequential/03_shift_registers/ece241_2013_q12.v)
