@@ -381,3 +381,121 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 실패 기록: 2026-07-28 1차로 `wire [15:0] row [0:15]` unpacked 배열을 `+:`로 잘라 row별 연산을 시도함. 2차로 `pandan` 변수에 이웃 합을 담아 `case`에 넣는 방식을 시도함. 둘 다 클럭 동작이 정상인지 확신이 서지 않아 포기하고 인덱스를 직접 계산하는 형태로 선회함. 3차 시도에서 괄호 위치를 틀려 `& 15`가 덧셈 전체에 걸려 FAIL.
 - 남은 것: 포기한 두 방식 모두 실제로는 동작한다. unpacked 배열은 `q`를 다르게 잘라 보는 배선일 뿐이라 레지스터가 아니고 클럭과 무관하다. `pandan` 방식은 대입 연산자가 관건이다. `always` 블록 안에서 계산 중간값으로 쓰는 임시 변수는 blocking(`=`)으로 써야 아래 `case`가 새 값을 본다. non-blocking(`<=`)으로 쓰면 블록이 끝나야 반영되어 `case`가 직전 값을 읽는다. "순차 회로는 무조건 `<=`"가 아니라 플립플롭이 될 신호만 `<=`다.
 - 메모: [손으로 정리한 설계 메모](images/conwaylife-memo.jpg)
+
+# Finite State Machines
+
+## Fsm1
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: `parameter`가 무엇인지 질문함.
+- 몰랐던 부분: `parameter`의 존재와 용도.
+- 배운 것: `parameter`는 이름 붙인 상수로 컴파일 시점에 정해진다. 상태에 이름을 붙이면 인코딩을 바꿀 때 `parameter` 줄만 고치면 된다. `#(parameter WIDTH = 8)` 형태로 모듈을 재사용 가능하게 만드는 용도도 있다. `input`으로 넘기는 값과 달리 합성 시점에 고정되므로 하드웨어 크기 자체가 달라진다. FSM의 기본 골격은 2-always 구조다. 조합 블록이 `next_state`를 계산하고, 순차 블록이 `state`를 갱신하며, 출력은 `state`에서 나온다.
+- 코드: [`fsm1.v`](../2_circuits/02_sequential/05_fsm/fsm1.v)
+- 남은 것: 조합 블록의 `if-else` 사슬에 `else`가 없다. 상태가 둘뿐이라 네 경우가 전부 커버되었지만, 상태가 늘면 빠뜨린 조합에서 `next_state`가 값을 받지 못해 래치가 생긴다. 기본값을 먼저 쓰거나(`next_state = state;`) `case`에 `default`를 붙이면 막을 수 있다. 상태가 4개, 8개로 늘어나면 `if-else` 사슬은 감당이 안 되므로 `case`로 습관을 들이는 편이 낫다.
+
+## Fsm1s
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 문제가 준 템플릿의 의도가 무엇인지 질문함.
+- 몰랐던 부분: Verilog-1995 포트 선언 문법과 1-always 스타일 FSM의 존재.
+- 배운 것: Fsm1의 동기 리셋 버전이므로 감지 리스트에서 `posedge areset`만 빼면 된다. 문제가 준 템플릿은 두 가지를 보여주려는 의도였다. 첫째는 포트 이름만 괄호에 나열하고 방향과 타입을 아래에서 따로 선언하는 Verilog-1995 문법, 둘째는 클럭 블록 하나에 상태 전이와 출력을 모두 넣는 1-always 스타일이다. 템플릿이 `present_state = next_state`로 blocking을 쓰는 이유는 그 아래 `case`가 갱신된 새 상태를 읽어야 하기 때문이며, non-blocking이면 직전 상태를 읽어 출력이 한 박자 밀린다. Conwaylife의 `pandan`과 같은 원리다.
+- 코드: [`fsm1s.v`](../2_circuits/02_sequential/05_fsm/fsm1s.v)
+- 남은 것: 2-always로 짜고 출력을 `assign`으로 빼는 방식이 1-always와 타이밍이 동일하면서도 조합 논리와 레지스터가 코드에서 분리된다. 합성 결과가 예측 가능하고 실무 표준도 이쪽이다. HDLBits가 같은 문제를 두 스타일로 낸 것은 비교하라는 의도이지 1-always를 권장하는 것이 아니다.
+
+## Fsm2
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Fsm1에서 지적받은 대로 `if-else` 사슬을 `case`로 바꾸고 `default`를 붙였다. 이 형태가 FSM 표준 골격이며 상태만 늘리면 나머지 문제도 같은 틀로 커버된다. 동작 자체는 Exams/ece241 2013 q7의 JK 플립플롭과 같으며, 그때는 진리표로 풀었고 여기서는 상태 기계로 푸었다. 같은 회로를 두 관점에서 본 셈이다.
+- 코드: [`fsm2.v`](../2_circuits/02_sequential/05_fsm/fsm2.v)
+
+## Fsm2s
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Fsm2의 동기 리셋 버전으로 감지 리스트에서 `posedge areset`만 빼면 된다. Fsm1 -> Fsm1s와 같은 관계다.
+- 코드: [`fsm2s.v`](../2_circuits/02_sequential/05_fsm/fsm2s.v)
+
+## Fsm3comb
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: FSM에서 조합 논리 부분만 떼어낸 문제라 `clk`이 없다. 상태 레지스터는 바깥에 있다고 치고 `next_state` 계산과 출력만 만든다. `out = f(state)`이므로 Moore 머신이며, 입력 `in`이 출력에 직접 영향을 주지 않고 상태를 거쳐서만 반영된다.
+- 코드: [`fsm3comb.v`](../2_circuits/02_sequential/05_fsm/fsm3comb.v)
+- 남은 것: `case`에 `default`가 빠졌다. 상태가 2비트고 A~D 네 개가 전부라 지금은 래치가 생기지 않지만, 상태 수가 2의 거듭제곱이 아니면 남는 조합에서 바로 래치가 된다. Fsm2에서는 붙였는데 여기서 빠졌다.
+
+## Fsm3onehot
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 문제 지문 번역을 요청함.
+- 몰랐던 부분: one-hot 인코딩으로 "관찰을 통해 식을 유도한다(by inspection)"는 방법의 의미.
+- 배운 것: one-hot 인코딩은 정확히 하나의 상태 비트만 1임을 보장하므로, "현재 상태 A인가"를 검사하는 식이 `state[A]` 하나로 끝난다. 상태 비트 전부를 비교할 필요가 없다. 따라서 각 상태로 들어오는 간선(incoming edge)만 모아 OR로 묶으면 전이식이 완성된다. 한 번에 최대 하나의 곱항만 활성이라 절끼리 충돌하지 않는다. 이것이 one-hot FSM의 논리가 단순해지는 이유이며, 대가로 상태 비트 저장 공간을 더 쓴다.
+- 코드: [`fsm3onehot.v`](../2_circuits/02_sequential/05_fsm/fsm3onehot.v)
+- 남은 것: 왼쪽은 `next_state[A]`로 이름을 쓰고 오른쪽은 `state[0]`으로 숫자를 썼다. 양쪽 모두 이름으로 통일하면 `(state[A] | state[C]) & ~in`이 되어 상태 전이도와 바로 대조된다.
+
+## Fsm3
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Fsm3comb에 상태 레지스터와 비동기 리셋을 붙인 형태다. 전이 논리와 출력 논리는 그대로 재사용했다.
+- 코드: [`fsm3.v`](../2_circuits/02_sequential/05_fsm/fsm3.v)
+- 남은 것: `reg [3:0] state`는 폭이 과하다. 상태가 넷이면 2비트로 충분하므로 `[1:0]`이 맞다. 값이 0~3이라 상위 두 비트는 항상 0이고 합성기가 대개 제거하지만 의도를 정확히 쓰는 편이 낫다. Fsm3onehot의 4비트 선언이 손에 남은 듯하다. `default`도 여전히 없으나 2비트면 네 값이 전부라 문제가 되지는 않는다.
+
+## Fsm3s
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Fsm3의 동기 리셋 버전으로 감지 리스트에서 `posedge areset`을 뺀다. Fsm3에서 지적받은 두 가지도 함께 고쳤다. 상태 폭을 `[1:0]`으로 줄이고 `case`에 `default`를 붙였다.
+- 코드: [`fsm3s.v`](../2_circuits/02_sequential/05_fsm/fsm3s.v)
+
+## Exams/ece241 2013 q4
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 문제 지문 번역을 요청함. `dfr`이 무엇을 하는 것인지 질문함.
+- 몰랐던 부분: 문제가 무엇을 요구하는지 파악하는 데 시간이 걸렸다. 상태를 수위 4개로만 생각하고 전이가 한 방향이라고 오해했다.
+- 배운 것: `dfr`은 수위가 내려왔을 때만 열리므로, 같은 수위라도 어디서 도달했느냐에 따라 출력이 갈린다. Moore 머신은 출력이 상태만으로 정해져야 하므로, 방향 정보를 별도 신호로 기억하는 대신 상태 자체에 담아야 한다. 중간 두 구간을 H(올라온 것)와 L(내려온 것)로 쪼개서 상태를 6개로 만든다. 최상단과 최하단은 방향이 하나뿐이라 나눌 필요가 없다. 물은 차기도 빠지기도 하므로 전이는 위아래 양방향이다. 출력식에서 `assign fr1 = (state != AS3)`처럼 나머지 다섯을 나열하는 대신 예외 하나만 빼는 형태가 짧고 읽기 쉽다.
+- 코드: [`ece241_2013_q4.v`](../2_circuits/02_sequential/05_fsm/ece241_2013_q4.v)
+- 당시 가설: "일단 상태는 수위가 되고 총 4개고 각각에 따라 S123을 입력받으면 한칸 위로 전이되고 유랑 압력은 하나씩 꺼지는 형태인데"
+- 메모: [상태 모식도](images/ece241-2013-q4-memo.jpg)
+
+## Lemmings1
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: 상태 두 개(LEFT, RIGHT)로 끝나는 기본 FSM이다. 벽에 부딪히면 반대 방향으로 전이하고 출력은 상태에서 바로 나온다.
+- 코드: [`lemmings1.v`](../2_circuits/02_sequential/05_fsm/lemmings1.v)
+
+## Lemmings2
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 떨어진 뒤 착지하면 떨어지기 전 방향으로 다시 걸어야 한다는 것을 어떻게 구현할지 고민했다.
+- 배운 것: 방향 정보를 별도 신호로 기억하려 하면 래치가 생긴다. 대신 FALL 상태를 FALLLEFT와 FALLRIGHT 둘로 나누어 방향을 상태 자체에 담으면 된다. Exams/ece241 2013 q4에서 수위를 H/L로 쪼개 것과 같은 발상이다. Moore 머신은 출력이 상태만으로 정해져야 하므로, 출력이 달라지거나 이후 전이가 달라져야 하면 상태를 나누는 것이 정석이다.
+- 코드: [`lemmings2.v`](../2_circuits/02_sequential/05_fsm/lemmings2.v)
+- 실패 기록: 2026-07-29 1차 시도에서 `original`이라는 reg를 만들어 떨어지기 전 방향을 저장하고 불러오려 했으나 래치가 생겼음.
+
+## Lemmings3
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Lemmings2와 같은 방식으로 DIG를 DIGLEFT와 DIGRIGHT로 나눠다. 파는 도중 땅이 사라지면 그 방향의 FALL로 가야 하므로 방향 정보가 필요하고, 상태를 나누는 것이 그대로 해답이 된다. LEFT/RIGHT 전이에서 `dig` 판정이 `bump`보다 바깥에 있어, 문제가 요구한 우선순위(ground > dig > bump)가 삼항 중첩의 순서로 그대로 나타난다.
+- 코드: [`lemmings3.v`](../2_circuits/02_sequential/05_fsm/lemmings3.v)
