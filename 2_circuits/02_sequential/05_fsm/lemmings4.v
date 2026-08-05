@@ -1,10 +1,11 @@
 //==============================================================
-// Problem : Lemmings3
+// Problem : Lemmings4
 // Section : Circuits / Sequential / Finite State Machines
-// URL     : https://hdlbits.01xz.net/wiki/Lemmings3
+// URL     : https://hdlbits.01xz.net/wiki/Lemmings4
 // Solved  : 2026-07-29
 //--------------------------------------------------------------
-// Lemmings2에서 한 거랑 똑같이 그냥 DIG를 좌우로 나눠서 했다.
+// counter까지는 했는데 counter 크기를 [5:0]으로 했다가 작아서
+// 문제가 생겼다. 해결하는 데 꽤 걸렸다.
 //==============================================================
 
 module top_module(
@@ -18,14 +19,15 @@ module top_module(
     output walk_right,
     output aaah,
     output digging ); 
-    parameter LEFT = 0, RIGHT = 1, FALLRIGHT = 2, FALLLEFT = 3, DIGRIGHT = 4, DIGLEFT = 5;
+    parameter LEFT = 0, RIGHT = 1, FALLRIGHT = 2, FALLLEFT = 3, DIGRIGHT = 4, DIGLEFT = 5, DEAD = 6;
     reg [2:0] state, nextstate;
+    reg [6:0] counter;
     always @(*) begin
         case (state)
             LEFT : nextstate = ground ? (dig ? DIGLEFT : (bump_left ? RIGHT : LEFT)) : FALLLEFT;
             RIGHT : nextstate = ground ? (dig ? DIGRIGHT : (bump_right ? LEFT : RIGHT)) : FALLRIGHT;
-            FALLRIGHT : nextstate = ground ? RIGHT : FALLRIGHT;
-            FALLLEFT : nextstate = ground ? LEFT : FALLLEFT;
+            FALLRIGHT : nextstate = ground ? ((counter > 19) ? DEAD : RIGHT) : FALLRIGHT;
+            FALLLEFT : nextstate = ground ? ((counter > 19) ? DEAD : LEFT) : FALLLEFT;
             DIGRIGHT : nextstate = ground ? DIGRIGHT : FALLRIGHT;
             DIGLEFT : nextstate = ground ? DIGLEFT : FALLLEFT;
             default : nextstate = state;
@@ -35,8 +37,16 @@ module top_module(
         if (areset) begin
             state <= LEFT;
         end
-        else begin 
+        else begin
             state <= nextstate;
+        end
+    end
+    always @(posedge clk) begin
+        if ( state == FALLRIGHT | state == FALLLEFT ) begin
+            counter <= counter + 1;
+        end
+        else if (state != DEAD) begin
+            counter <= 0;
         end
     end
     assign walk_left = ( state == LEFT );

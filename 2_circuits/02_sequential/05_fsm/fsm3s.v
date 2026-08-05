@@ -3,11 +3,6 @@
 // Section : Circuits / Sequential / Finite State Machines
 // URL     : https://hdlbits.01xz.net/wiki/Fsm3s
 // Solved  : 2026-07-29
-//--------------------------------------------------------------
-// 헷갈린 부분: 없음.
-// Fsm3의 동기 리셋 버전. 감지 리스트에서 posedge areset을 뺐다.
-// Fsm3에서 지적받은 두 가지도 함께 고쳤다. 상태 폭을 [1:0]으로
-// 줄이고 case에 default를 붙였다.
 //==============================================================
 
 module top_module(

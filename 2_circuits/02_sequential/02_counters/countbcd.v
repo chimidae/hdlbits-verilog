@@ -3,11 +3,6 @@
 // Section : Circuits / Sequential / Counters
 // URL     : https://hdlbits.01xz.net/wiki/Countbcd
 // Solved  : 2026-07-28
-//--------------------------------------------------------------
-// 헷갈린 부분: 없음. Exams/ece241 2014 q7b의 구조를 그대로 옮겼다.
-// 한 자리짜리 decade_counter를 직접 정의해 네 개 인스턴스화하고,
-// 윗자리 enable은 아랫자리 조건을 누적해서 만든다. 캐리 전파와
-// 같은 구조다.
 //==============================================================
 
 module top_module (

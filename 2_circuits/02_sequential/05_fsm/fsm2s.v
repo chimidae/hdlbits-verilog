@@ -3,10 +3,6 @@
 // Section : Circuits / Sequential / Finite State Machines
 // URL     : https://hdlbits.01xz.net/wiki/Fsm2s
 // Solved  : 2026-07-29
-//--------------------------------------------------------------
-// 헷갈린 부분: 없음.
-// Fsm2의 동기 리셋 버전. 감지 리스트에서 posedge areset만 빼면
-// 되고 나머지는 그대로다. Fsm1 -> Fsm1s와 같은 관계다.
 //==============================================================
 
 module top_module(
