@@ -509,3 +509,22 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 별도 기록 없음
 - 배운 것: 별도 기록 없음
 - 코드: [`fsm_onehot.v`](../2_circuits/02_sequential/05_fsm/fsm_onehot.v)
+
+## Fsm ps2
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 문제 지문 번역을 요청함. 최소한의 힌트를 요청함. 통과 후 왜 된 것인지 질문함.
+- 몰랐던 부분: 간격은 맞는데 첫 `done`이 한 칸 밀렸다.
+- 배운 것: 별도 기록 없음
+- 코드: [`fsm_ps2.v`](../2_circuits/02_sequential/05_fsm/fsm_ps2.v)
+- 실패 기록: 1차 시도에서 `counter > 1`로 작성해 FAIL. `counter > 0`으로 수정해 통과.
+
+## Fsm ps2data
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: 저번 거 틀린 이유를 아니까 이번 건 쉬웠다.
+- 코드: [`fsm_ps2data.v`](../2_circuits/02_sequential/05_fsm/fsm_ps2data.v)
