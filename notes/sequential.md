@@ -528,3 +528,22 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 없음
 - 배운 것: 저번 거 틀린 이유를 아니까 이번 건 쉬웠다.
 - 코드: [`fsm_ps2data.v`](../2_circuits/02_sequential/05_fsm/fsm_ps2data.v)
+
+## Fsm serial
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 사이클 그림을 그려서 풀었다.
+- 코드: [`fsm_serial.v`](../2_circuits/02_sequential/05_fsm/fsm_serial.v)
+- 실패 기록: DISCARD를 추가하지 않고 했다가 바로 사이클이 돌아가서 두 사이클 늦는 오류가 있었고 고쳤다.
+
+## Fsm serialdata
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 없음
+- 배운 것: Fsm serial에서 딱 한 줄 추가해 끝났다.
+- 코드: [`fsm_serialdata.v`](../2_circuits/02_sequential/05_fsm/fsm_serialdata.v)
