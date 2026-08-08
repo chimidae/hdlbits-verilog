@@ -547,3 +547,31 @@ HDLBits Sequential 문제를 풀면서 확인한 상태와 학습 포인트를 �
 - 몰랐던 부분: 없음
 - 배운 것: Fsm serial에서 딱 한 줄 추가해 끝났다.
 - 코드: [`fsm_serialdata.v`](../2_circuits/02_sequential/05_fsm/fsm_serialdata.v)
+
+## Fsm serialdp
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 패리티 비트가 원래 홀수를 맞추는 것이라면 항상 통과하는 것 아닌지, 제공된 `parity` 모듈은 왜 준 것인지 질문함.
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 제공된 `parity` 모듈은 쓰지 않고 리덕션 XOR로 처리했다.
+- 코드: [`fsm_serialdp.v`](../2_circuits/02_sequential/05_fsm/fsm_serialdp.v)
+
+## Fsm hdlc
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 없음
+- 몰랐던 부분: 별도 기록 없음
+- 배운 것: 별도 기록 없음
+- 코드: [`fsm_hdlc.v`](../2_circuits/02_sequential/05_fsm/fsm_hdlc.v)
+
+## Exams/ece241 2013 q8
+
+- 상태: HDLBits PASS
+- Local sim: NOT RUN
+- AI에게 물은 것: 힌트를 요청함. 문제는 아는데 해결책이 안 떠오른다고 물음. 통과 후 왜 된 것인지 질문함. 문제에서는 3개의 상태로도 충분하다고 했는데 그게 무슨 의미인지 질문함.
+- 몰랐던 부분: 11이 반복될 때 입력이 무시되는 문제는 알고 있었으나 해결책을 몰랐다.
+- 배운 것: 별도 기록 없음
+- 코드: [`ece241_2013_q8.v`](../2_circuits/02_sequential/05_fsm/ece241_2013_q8.v)
+- 실패 기록: 1차 시도에서 TWO에서 `x=1`일 때 ONE으로 보내 FAIL. TWO에 머무도록 고쳐 통과.
